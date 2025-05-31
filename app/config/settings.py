@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     smtp_server: str
     smtp_port: int
 
+    # Slack
+    slack_webhook_url: str
+
     class Config:
         env_file = ".env"
 
