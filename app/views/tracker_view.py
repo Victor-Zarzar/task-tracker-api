@@ -1,11 +1,10 @@
 from typing import Optional
-from fastapi import APIRouter, Request, BackgroundTasks, HTTPException, status
+from fastapi import APIRouter, Request, BackgroundTasks, HTTPException, status, Query
 from app.services.rate_limiter import limiter
 from app.services.notifier import send_email_notification, send_slack_notification
-from datetime import datetime
+from datetime import datetime, timezone
 from app.models.tracker_model import CheckTracker, Location
 import httpx
-from fastapi import Query
 
 
 router = APIRouter(prefix="/api/v1/tracker", tags=["Tracker API"])
@@ -53,7 +52,7 @@ async def root(
 ):
     visitor_ip = request.client.host
     user_agent = request.headers.get("User-Agent", "")
-    timestamp = datetime.utcnow()
+    timestamp = datetime.now(timezone.utc)
 
     if is_bot(user_agent):
         print(f"🤖 Bot detectado: {user_agent} - IP: {visitor_ip}")
