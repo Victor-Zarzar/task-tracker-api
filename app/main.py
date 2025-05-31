@@ -10,7 +10,7 @@ from app.views.tracker_view import router
 
 app = FastAPI(
     title=settings.app_name,
-    description="Portfolio visitor tracking API with notifications (no database)",
+    description="Website visitor tracking API with notifications (no database)",
     version="1.0.0",
     debug=settings.debug
 )

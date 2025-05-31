@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     rate_limit_window: int = 60
 
     # App Info
-    app_name: str = "Portfolio Tracker"
+    app_name: str = "Website Tracker API"
     debug: bool = False
     environment: str = "development"
 

@@ -69,17 +69,17 @@ async def root(
 
     if not debug:
         background_tasks.add_task(
-            send_email_notification, visitor_ip, page, ref)
+            send_email_notification, visitor_ip, page, ref, location, timestamp, user_agent)
         background_tasks.add_task(
-            send_slack_notification, visitor_ip, page, ref)
+            send_slack_notification, visitor_ip, page, ref, location, timestamp, user_agent)
     else:
         print("🔧 Debug mode ativo — notificações não enviadas.")
 
     return CheckTracker(
-        message="Portfolio Tracker API - No Database Version",
+        message="Website Tracker API - No Database Version",
         visitor_ip=visitor_ip,
         user_agent=user_agent,
         timestamp_utc=timestamp,
         location=location,
-        status="notification sent (debug)" if debug else "notification sent"
+        status="notification sent (debug)" if debug else "notification sent",
     )

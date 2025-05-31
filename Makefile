@@ -7,7 +7,7 @@ VENV = .venv
 PIP = $(VENV)/bin/pip
 PYTHON_VENV = $(VENV)/bin/python
 UVICORN = $(VENV)/bin/uvicorn
-PROD_COMPOSE = docker-compose.yaml
+PROD_COMPOSE = docker-compose.prod.yaml
 
 .PHONY: all setup install run stop clean docker-build docker-run docker-stop docker-clean help
 
@@ -24,7 +24,7 @@ install: setup
 	$(PIP) install -r requirements.txt
 	@echo "Dependencies installed."
 
-up:
+up-dev:
 	@if [ ! -x "$(UVICORN)" ]; then \
 		echo "❌ Dependencies not installed. Run 'make install' before starting the server."; \
 		exit 1; \
@@ -45,6 +45,18 @@ clean:
 	@echo "Stopping and removing Docker Compose containers..."
 	docker compose -f $(PROD_COMPOSE) down
 	@echo "Environment cleaned."
+
+up-prod:
+	@echo "Subindo ambiente de produção com Docker Compose..."
+	docker compose -f $(PROD_COMPOSE) up -d --build
+
+down-prod:
+	@echo "Parando ambiente de produção..."
+	docker compose -f $(PROD_COMPOSE) down
+
+logs-prod:
+	@echo "Logs do ambiente de produção..."
+	docker compose -f $(PROD_COMPOSE) logs -f	
 
 docker-build:
 	@echo "Building Docker image..."
@@ -86,6 +98,11 @@ help:
 	@echo "  make stop             ➜ Stop local server"
 	@echo "  make test             ➜ Run tests with pytest"
 	@echo "  make clean            ➜ Clean local environment and containers"
+	@echo ""
+    @echo "🚀 Comandos de Produção:"
+	@echo "  make up-prod          ➜ Subir ambiente de produção com Docker Compose"
+	@echo "  make down-prod        ➜ Parar ambiente de produção"
+	@echo "  make logs-prod        ➜ Exibir logs da produção"
 	@echo ""
 	@echo "🐳 Docker Commands (manual usage):"
 	@echo "  make docker-build     ➜ Build Docker image manually"
