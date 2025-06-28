@@ -5,5 +5,5 @@ from app.config.settings import settings
 limiter = Limiter(
     key_func=get_remote_address,
     default_limits=[
-        f"{settings.rate_limit_requests}/{settings.rate_limit_window} seconds"]
+        f"{settings.RATE_LIMIT_REQUESTS}/{settings.RATE_LIMIT_WINDOW} seconds"]
 )

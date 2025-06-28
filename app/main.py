@@ -4,18 +4,15 @@ from app.services.rate_limiter import limiter
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.errors import RateLimitExceeded
 from app.handlers.exceptions import rate_limit_exceeded_handler
-from dotenv import load_dotenv
 from app.config.settings import settings
 from app.views.tracker_view import router
 
 app = FastAPI(
-    title=settings.app_name,
+    title=settings.APP_NAME,
     description="Website visitor tracking API with notifications (no database)",
     version="1.0.0",
-    debug=settings.debug
+    debug=settings.DEBUG
 )
-
-load_dotenv()
 
 # Rate Limiter
 app.state.limiter = limiter

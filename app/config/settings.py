@@ -1,31 +1,30 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
 
 
 class Settings(BaseSettings):
     # Rate Limiting
-    rate_limit_requests: int = 5
-    rate_limit_window: int = 60
+    RATE_LIMIT_REQUESTS: int
+    RATE_LIMIT_WINDOW: int
 
     # App Info
-    app_name: str = "Website Tracker API"
-    debug: bool = False
-    environment: str = "development"
+    APP_NAME: str
+    DEBUG: bool
+    ENVIRONMENT: str
 
     # CORS
-    allowed_origins: List[str] = ["*"]
+    ALLOWED_ORIGINS: List[str]
 
     # Email
-    email_address: str
-    email_password: str
-    smtp_server: str
-    smtp_port: int
+    EMAIL_ADDRESS: str
+    EMAIL_PASSWORD: str
+    SMTP_SERVER: str
+    SMTP_PORT: int
 
     # Slack
-    slack_webhook_url: str
+    SLACK_WEBHOOK_URL: str
 
-    class Config:
-        env_file = ".env"
+    model_config = SettingsConfigDict(env_file=".env")
 
 
 settings = Settings()

@@ -1,75 +1,82 @@
 # 📦 Task Tracker API
 
-A Python-based API to manage and track tasks, supporting both local development and Docker-based production environments.
+A Python-based API to manage and track tasks with Docker support for development and production environments.
 
----
+## Requirements
 
-## ⚙️ Requirements
-
-- Python 3.10+
 - Docker
 - Docker Compose
 - make
 
----
+## Available Commands
 
-## 🛠️ Makefile Commands
-
-### 📦 Development
-
-| Command           | Description                                       |
-|-------------------|---------------------------------------------------|
-| `make setup`      | Create a virtual environment                      |
-| `make install`    | Install dependencies into the virtual environment |
-| `make up-dev`     | Start local development server (Uvicorn + reload) |
-| `make stop`       | Stop the local development server                 |
-| `make test`       | Run tests with `pytest`                           |
-| `make clean`      | Clean virtual environment and Docker containers   |
-
-> 💡 Tip: Always run `make install` before `make up-dev`.
-
----
-
-### 🚀 Production (Docker Compose)
-
-| Command             | Description                                      |
-|---------------------|--------------------------------------------------|
-| `make up-prod`      | Start production environment with Docker Compose |
-| `make down-prod`    | Stop production environment                      |
-| `make logs-prod`    | Show logs for the production environment         |
-
----
-
-### 🐳 Docker (Manual)
-
-| Command               | Description                          |
-|------------------------|--------------------------------------|
-| `make docker-build`    | Build the Docker image               |
-| `make docker-run`      | Run the Docker container             |
-| `make docker-stop`     | Stop and remove the container        |
-| `make docker-clean`    | Remove the Docker image              |
-| `make docker-logs`     | Show container logs                  |
-| `make docker-shell`    | Access container shell via bash      |
-
----
-
-## 📂 Project Structure
-
-.
-├── app/ # Application code
-├── tests/ # Tests
-├── requirements.txt # Python dependencies
-├── Dockerfile # Docker image instructions
-├── docker-compose.prod.yaml # Production Compose file
-├── Makefile # Task automation
-└── README.md # Project documentation
-
----
-
-## ▶️ Quickstart
-
-### Local Development
+### Development
 
 ```bash
-make install     # Create virtualenv and install dependencies
-make up-dev      # Start local server at http://localhost:8000
+make build-dev    # Build development Docker image
+make up-dev       # Start development server on port 8000
+make down-dev     # Stop development server
+make logs-dev     # View development logs
+make test         # Run tests with pytest
+```
+
+### Production
+
+```bash
+make up-prod      # Start production environment
+make down-prod    # Stop production environment  
+make logs-prod    # View production logs
+```
+
+### Maintenance
+
+```bash
+make clean        # Clean environment and remove containers
+make help         # Show all available commands
+```
+
+## Quick Start
+
+### Development Environment
+
+```bash
+# Start development server
+make up-dev
+
+# Server will be available at http://localhost:8000
+# Hot reload enabled for development
+```
+
+### Production Environment
+
+```bash
+# Start production server
+make up-prod
+
+# Stop production server
+make down-prod
+```
+
+### Running Tests
+
+```bash
+make test
+```
+
+## Project Structure
+
+```
+.
+├── app/                      # Application code
+├── tests/                    # Test files
+├── docker-compose.dev.yaml   # Development configuration
+├── docker-compose.prod.yaml  # Production configuration
+├── Makefile                   # Task automation
+└── README.md                 # This file
+```
+
+## Notes
+
+- Development environment runs with hot reload enabled
+- Production environment runs in detached mode with optimized settings
+- Use `make help` to see all available commands with descriptions
