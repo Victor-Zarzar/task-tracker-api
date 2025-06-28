@@ -8,7 +8,36 @@ A Python-based API to manage and track tasks with Docker support for development
 - Docker Compose
 - make
 
+## Setup
+
+Create a `.env` file in the project root with your configuration:
+
+```env
+# App Info
+APP_NAME=Website Tracker API
+DEBUG=false
+ENVIRONMENT=development
+
+# CORS
+ALLOWED_ORIGINS=["*"]
+
+# Rate Limiting
+RATE_LIMIT_REQUESTS=5
+RATE_LIMIT_WINDOW=60
+
+# Email Configuration
+EMAIL_ADDRESS=your_email@example.com
+EMAIL_PASSWORD=your_email_password
+SMTP_SERVER=smtp.example.com
+SMTP_PORT=587
+
+# Slack Webhook
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
+```
+
 ## Available Commands
+
+Use `make help` to see all commands with detailed descriptions.
 
 ### Development
 
@@ -28,16 +57,22 @@ make down-prod    # Stop production environment
 make logs-prod    # View production logs
 ```
 
-### Maintenance
+### Help
 
 ```bash
-make clean        # Clean environment and remove containers
-make help         # Show all available commands
+make help         # Show all available commands with descriptions
 ```
 
 ## Quick Start
 
-### Development Environment
+### 1. Setup Environment
+
+```bash
+# Create .env file with your configuration (see Setup section above)
+cp .env.example .env  # Edit with your values
+```
+
+### 2. Development Environment
 
 ```bash
 # Start development server
@@ -47,7 +82,7 @@ make up-dev
 # Hot reload enabled for development
 ```
 
-### Production Environment
+### 3. Production Environment
 
 ```bash
 # Start production server
@@ -57,7 +92,7 @@ make up-prod
 make down-prod
 ```
 
-### Running Tests
+### 4. Running Tests
 
 ```bash
 make test
@@ -71,7 +106,7 @@ make test
 ├── tests/                    # Test files
 ├── docker-compose.dev.yaml   # Development configuration
 ├── docker-compose.prod.yaml  # Production configuration
-├── Makefile                   # Task automation
+├── Makefile                  # Task automation
 └── README.md                 # This file
 ```
 
