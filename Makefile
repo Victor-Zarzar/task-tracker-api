@@ -6,7 +6,7 @@ DEV_COMPOSE = docker-compose.dev.yaml
 PROD_COMPOSE = docker-compose.prod.yaml
 
 build-dev:
-	@echo "Building development image..."
+	@echo "Building development image dev..."
 	docker compose -f $(DEV_COMPOSE) build
 
 up-dev:
@@ -37,6 +37,10 @@ clean:
 	docker compose -f $(PROD_COMPOSE) down -v
 	@echo "Environment cleaned."
 
+build-prod:
+	@echo "Building development image prod..."
+	docker compose -f $(PROD_COMPOSE) build	
+
 up-prod:
 	@echo "🚀 Starting production environment with Docker Compose..."
 	docker compose -f $(PROD_COMPOSE) up -d --build
@@ -54,15 +58,15 @@ help:
 	@echo "📦 Task Tracker API - Makefile Commands"
 	@echo "──────────────────────────────────────────────"
 	@echo "🛠️  Development Commands:"
-	@echo "  make setup     ➜ Create virtual environment"
-	@echo "  make install   ➜ Install dependencies"
-	@echo "  make up-dev    ➜ Run local server (development)"
-	@echo "  make stop      ➜ Stop local server"
-	@echo "  make test      ➜ Run tests with pytest"
-	@echo "  make clean     ➜ Clean local environment and containers"
+	@echo "  make build-dev  ➜ Build image Docker (development)"
+	@echo "  make up-dev     ➜ Run local server (development)"
+	@echo "  make stop       ➜ Stop local server"
+	@echo "  make test       ➜ Run tests with pytest"
+	@echo "  make clean      ➜ Clean local environment and containers"
 	@echo ""
 	@echo "🚀 Production Commands:"
-	@echo "  make up-prod   ➜ Start production environment with Docker Compose"
-	@echo "  make down-prod ➜ Stop production environment"
-	@echo "  make logs-prod ➜ Show production logs"
+	@echo "  make build-prod ➜ Build image Docker (prod)"
+	@echo "  make up-prod    ➜ Start production environment with Docker Compose"
+	@echo "  make down-prod  ➜ Stop production environment"
+	@echo "  make logs-prod  ➜ Show production logs"
 	@echo ""
