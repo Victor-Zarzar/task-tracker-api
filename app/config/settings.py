@@ -1,5 +1,14 @@
+import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
+
+
+# Get Env file
+def get_env_file():
+    env = os.getenv('ENVIRONMENT', 'development')
+    if env == 'production':
+        return '.env.prod'
+    return '.env.dev'
 
 
 class Settings(BaseSettings):
@@ -24,7 +33,10 @@ class Settings(BaseSettings):
     # Slack
     SLACK_WEBHOOK_URL: str
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(
+        env_file=get_env_file(),
+        env_file_encoding='utf-8'
+    )
 
 
 settings = Settings()

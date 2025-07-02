@@ -1,6 +1,5 @@
 from typing import Optional
 from fastapi import APIRouter, Request, BackgroundTasks, HTTPException, status, Query
-from app.services.rate_limiter import limiter
 from app.services.notifier import send_email_notification, send_slack_notification
 from datetime import datetime, timezone
 from app.models.tracker_model import CheckTracker, Location
@@ -41,7 +40,6 @@ async def get_location(ip: str) -> Location:
 
 
 @router.get("/", response_model=CheckTracker)
-@limiter.limit("1/minute")
 async def root(
     request: Request,
     background_tasks: BackgroundTasks,

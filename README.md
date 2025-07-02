@@ -10,9 +10,9 @@ A Python-based API to manage and track tasks with Docker support for development
 
 ## Setup
 
-Create a `.env` file in the project root with your configuration:
+Create a `.env.dev` file in the project root with your configuration:
 
-```env
+```env.dev
 # App Info
 APP_NAME=Website Tracker API
 DEBUG=false

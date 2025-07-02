@@ -29,12 +29,11 @@ test:
 
 clean:
 	@echo "Cleaning local environment..."
-	rm -rf $(VENV)
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	rm -rf .pytest_cache
+	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@rm -rf .pytest_cache 2>/dev/null || true
 	@echo "Stopping and removing Docker Compose containers..."
-	docker compose -f $(DEV_COMPOSE) down -v
-	docker compose -f $(PROD_COMPOSE) down -v
+	@docker compose -f $(DEV_COMPOSE) down -v 2>/dev/null || true
+	@docker compose -f $(PROD_COMPOSE) down -v 2>/dev/null || true
 	@echo "Environment cleaned."
 
 build-prod:
