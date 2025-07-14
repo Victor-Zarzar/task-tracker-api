@@ -5,7 +5,7 @@ client = TestClient(app)
 
 
 def test_tracker_rate_limit_exceeded():
-    url = "/api/v1/tracker/"
+    url = "/api/v1/tracker"
     params = {"page": "Homepage"}
 
     response = client.get(url, params=params)

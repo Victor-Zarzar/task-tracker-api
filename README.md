@@ -33,6 +33,12 @@ SMTP_PORT=587
 
 # Slack Webhook
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
+
+# Logs
+LOG_LEVEL=DEBUG
+
+# Token
+TOKEN="mytoken"
 ```
 
 ## Available Commands

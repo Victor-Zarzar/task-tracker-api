@@ -29,11 +29,14 @@ test:
 
 clean:
 	@echo "Cleaning local environment..."
-	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-	@rm -rf .pytest_cache 2>/dev/null || true
-	@echo "Stopping and removing Docker Compose containers..."
-	@docker compose -f $(DEV_COMPOSE) down -v 2>/dev/null || true
-	@docker compose -f $(PROD_COMPOSE) down -v 2>/dev/null || true
+	@docker compose -f $(DEV_COMPOSE) down -v --remove-orphans 2>/dev/null || true
+	@docker compose -f $(PROD_COMPOSE) down -v --remove-orphans 2>/dev/null || true
+	@docker images -q "task-tracker-api-web*" | xargs -r docker rmi -f 2>/dev/null || true
+	@docker system prune -f --volumes 2>/dev/null || true
+	@docker builder prune -f 2>/dev/null || true
+	@find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+	@find . -name "*.pyc" -type f -delete 2>/dev/null || true
+	@rm -rf .pytest_cache .coverage htmlcov 2>/dev/null || true
 	@echo "Environment cleaned."
 
 build-prod:

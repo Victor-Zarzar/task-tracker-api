@@ -1,12 +1,14 @@
 from typing import Optional
-from fastapi import APIRouter, Request, BackgroundTasks, HTTPException, status, Query
-from app.services.notifier import send_email_notification, send_slack_notification
+from app.logger import logger
+from fastapi import APIRouter, Request, BackgroundTasks, HTTPException, status, Query, Depends
+from app.services.notifier_service import send_email_notification, send_slack_notification
 from datetime import datetime, timezone
 from app.models.tracker_model import CheckTracker, Location
+from app.services.auth_service import verify_token
 import httpx
 
 
-router = APIRouter(prefix="/api/v1/tracker", tags=["Tracker API"])
+router = APIRouter(prefix="/api/v1", tags=["Tracker API"])
 
 
 BOT_USER_AGENTS = [
@@ -35,34 +37,41 @@ async def get_location(ip: str) -> Location:
                     loc=data.get("loc")
                 )
     except Exception as e:
-        print(f"⚠️ Erro ao buscar localização: {e}")
+        logger.error(
+            f"Error fetching location: {e}")
     return Location()
 
 
-@router.get("/", response_model=CheckTracker)
+@router.get("/tracker",
+            summary="Tracker",
+            description="Realiza a tarefa de enviar notificacao",
+            response_description="Status da API e dependências",
+            response_model=CheckTracker)
 async def root(
     request: Request,
     background_tasks: BackgroundTasks,
     page: str = Query(default="Website"),
     ref: Optional[str] = Query(
         default=None, description="Referrer or campaign"),
-    debug: bool = Query(default=False, description="Enable debug mode")
+    debug: bool = Query(default=False, description="Enable debug mode"),
+    _: None = Depends(verify_token)
 ):
     visitor_ip = request.client.host
     user_agent = request.headers.get("User-Agent", "")
     timestamp = datetime.now(timezone.utc)
 
     if is_bot(user_agent):
-        print(f"🤖 Bot detectado: {user_agent} - IP: {visitor_ip}")
+        logger.warning(
+            f"🤖 Bot detected: {user_agent} - IP: {visitor_ip}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Bots não são permitidos."
+            detail="Bots are not allowed."
         )
 
     location = await get_location(visitor_ip)
 
-    print(
-        f"👤 Visitante humano: {visitor_ip} - {user_agent} - page: {page} - ref: {ref}")
+    logger.info(
+        f"Human visitor: {visitor_ip} - {user_agent} - page: {page} - ref: {ref}")
 
     if not debug:
         background_tasks.add_task(
@@ -70,7 +79,8 @@ async def root(
         background_tasks.add_task(
             send_slack_notification, visitor_ip, page, ref, location, timestamp, user_agent)
     else:
-        print("🔧 Debug mode ativo — notificações não enviadas.")
+        logger.warning(
+            "Debug mode active — notifications not sent.")
 
     return CheckTracker(
         message="Website Tracker API - No Database Version",

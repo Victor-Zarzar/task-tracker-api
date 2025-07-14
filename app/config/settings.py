@@ -33,6 +33,12 @@ class Settings(BaseSettings):
     # Slack
     SLACK_WEBHOOK_URL: str
 
+    # Logs
+    LOG_LEVEL: str
+
+    # Token
+    TOKEN: str
+
     model_config = SettingsConfigDict(
         env_file=get_env_file(),
         env_file_encoding='utf-8'
