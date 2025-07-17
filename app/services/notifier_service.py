@@ -27,6 +27,7 @@ def mark_notified(visitor_ip: str, channel: str):
     notification_cache[key] = True
 
 
+# Function to send email notification
 def send_email_notification(visitor_ip: str, page: str, ref: Optional[str], location: Location, timestamp: datetime, user_agent: str):
     if is_already_notified(visitor_ip, "email"):
         logger.info(
@@ -46,7 +47,7 @@ def send_email_notification(visitor_ip: str, page: str, ref: Optional[str], loca
             f"🚀 New visitor to your website!\n\n"
             f"Hello Victor,\n\n"
             f"A new visitor has accessed your website.\n\n"
-            f"Detalhes:\n"
+            f"Details:\n"
             f"- IP: {visitor_ip}\n"
             f"- User-Agent: {user_agent}\n"
             f"- Location: {location.city}, {location.region}, {location.country}\n"
@@ -65,7 +66,7 @@ def send_email_notification(visitor_ip: str, page: str, ref: Optional[str], loca
         logger.info(
             f"📧 Email sent — IP: {visitor_ip}, Page: {page}, Ref: {ref}, User-Agent: {user_agent}")
 
-        # Marca no cache
+        # Mark in cache
         mark_notified(visitor_ip, "email")
 
     except Exception as e:
@@ -73,6 +74,7 @@ def send_email_notification(visitor_ip: str, page: str, ref: Optional[str], loca
             f"Error sending email: {e}")
 
 
+# Function to send Slack notification
 def send_slack_notification(visitor_ip: str, page: str, ref: Optional[str], location: Location, timestamp: datetime, user_agent: str):
     if is_already_notified(visitor_ip, "slack"):
         logger.info(

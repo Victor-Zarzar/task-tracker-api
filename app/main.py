@@ -1,5 +1,6 @@
 import logging
 from app.logger import logger
+from app.middlewares.block_bot import BlockBotMiddleware
 from fastapi import FastAPI
 from app.middlewares.cors_middleware import add_cors
 from app.services.rate_limiter import limiter
@@ -16,6 +17,9 @@ app = FastAPI(
     version="1.0.0",
     debug=settings.DEBUG
 )
+
+# Register Middleware to block bots
+app.add_middleware(BlockBotMiddleware)
 
 # Logs
 logger.info("Logger loaded successfully")

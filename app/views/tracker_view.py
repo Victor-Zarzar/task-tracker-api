@@ -11,19 +11,7 @@ import httpx
 router = APIRouter(prefix="/api/v1", tags=["Tracker API"])
 
 
-BOT_USER_AGENTS = [
-    "Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider",
-    "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver"
-]
-
-
-def is_bot(user_agent: str) -> bool:
-    if user_agent:
-        user_agent_lower = user_agent.lower()
-        return any(bot.lower() in user_agent_lower for bot in BOT_USER_AGENTS)
-    return False
-
-
+# Get location based on IP
 async def get_location(ip: str) -> Location:
     try:
         async with httpx.AsyncClient() as client:
@@ -42,9 +30,10 @@ async def get_location(ip: str) -> Location:
     return Location()
 
 
+# Route for tracker
 @router.get("/tracker",
             summary="Tracker",
-            description="Realiza a tarefa de enviar notificacao",
+            description="Performs the task of sending notification",
             response_description="Status da API e dependências",
             response_model=CheckTracker)
 async def root(
@@ -60,14 +49,6 @@ async def root(
     user_agent = request.headers.get("User-Agent", "")
     timestamp = datetime.now(timezone.utc)
 
-    if is_bot(user_agent):
-        logger.warning(
-            f"🤖 Bot detected: {user_agent} - IP: {visitor_ip}")
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Bots are not allowed."
-        )
-
     location = await get_location(visitor_ip)
 
     logger.info(
@@ -82,6 +63,7 @@ async def root(
         logger.warning(
             "Debug mode active — notifications not sent.")
 
+    # Return response
     return CheckTracker(
         message="Website Tracker API - No Database Version",
         visitor_ip=visitor_ip,

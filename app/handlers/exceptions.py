@@ -4,8 +4,8 @@ from fastapi.responses import JSONResponse
 from app.config.settings import settings
 
 
+# Exception handler for rate limiting
 async def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded):
-    """Exception do rate limiter."""
     retry_after = int(settings.RATE_LIMIT_WINDOW)
 
     return JSONResponse(

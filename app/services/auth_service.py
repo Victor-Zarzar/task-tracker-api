@@ -17,8 +17,6 @@ async def verify_token(
         logger.warning(
             f"Unauthorized access attempt - IP={client_ip}, API_KEY={masked_key}"
         )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Invalid or missing token."
-        )
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
     logger.info(f"Authorized access - IP={client_ip}, API_KEY={masked_key}")
