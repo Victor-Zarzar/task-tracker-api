@@ -7,7 +7,7 @@ from app.config.settings import settings
 # Setup logger configuration
 # This will load the logger configuration from a YAML file
 def setup_logger():
-    config_path = Path(__file__).resolve().parent.parent / "logger.yaml"
+    config_path = Path(__file__).resolve().parent.parent.parent / "logger.yaml"
     with open(config_path, "r") as f:
         config = yaml.safe_load(f)
 

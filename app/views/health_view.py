@@ -1,7 +1,8 @@
+from app.models.tracker_model import HealthCheckResponse
 from app.services.auth_service import verify_token
 from fastapi import APIRouter, Request, Depends
 from datetime import datetime, timezone
-from app.logger import logger
+from app.config.logger import logger
 
 router = APIRouter(prefix="/api/v1/tracker", tags=["Health Check"])
 
@@ -9,7 +10,8 @@ router = APIRouter(prefix="/api/v1/tracker", tags=["Health Check"])
 @router.get("/health",
             summary="Health Check",
             description="Checks the status of the API and its dependencies",
-            response_description="API status and dependencies")
+            response_description="API status and dependencies",
+            response_model=HealthCheckResponse)
 async def health_check(request: Request,
                        _: None = Depends(verify_token),
                        ):

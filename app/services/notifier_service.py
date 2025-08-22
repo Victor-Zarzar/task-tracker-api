@@ -3,45 +3,25 @@ import smtplib
 from email.message import EmailMessage
 from typing import Optional
 import requests
-from app.logger import logger
+from app.config.logger import logger
 from app.config.settings import settings
 from app.models.tracker_model import Location
-from cachetools import TTLCache
-
-notification_cache = TTLCache(maxsize=500, ttl=300)
-
-
-def is_already_notified(visitor_ip: str, channel: str) -> bool:
-    """
-    Returns True if we have already sent a notification to this IP on the specified channel.
-    """
-    key = f"{channel}:{visitor_ip}"
-    return key in notification_cache
-
-
-def mark_notified(visitor_ip: str, channel: str):
-    """
-    Marks the IP as already notified in the channel.
-    """
-    key = f"{channel}:{visitor_ip}"
-    notification_cache[key] = True
+from app.services.cache_service import is_already_notified, mark_notified
 
 
 # Function to send email notification
-def send_email_notification(visitor_ip: str, page: str, ref: Optional[str], location: Location, timestamp: datetime, user_agent: str):
+def send_email_notification(visitor_ip: str, page: str, ref: Optional[str], location: Location, timestamp: datetime, user_agent: str, reason: str, endpoint: str, url: str):
     if is_already_notified(visitor_ip, "email"):
         logger.info(
             f"⏳ Email already sent recently to IP {visitor_ip}. Ignoring.")
         return
 
     try:
-        lat, lon = (location.loc.split(",") if location.loc else ("", ""))
-        map_link = f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}#map=12/{lat}/{lon}" if lat and lon else "Map unavailable"
-
+        map_link = f"https://maps.google.com/?q={location.lat},{location.lon}"
         msg = EmailMessage()
         msg['Subject'] = '🚀 New visitor to your website!'
-        msg['From'] = settings.email_address
-        msg['To'] = settings.email_address
+        msg['From'] = settings.EMAIL_ADDRESS
+        msg['To'] = settings.EMAIL_PASSWORD
 
         msg.set_content(
             f"🚀 New visitor to your website!\n\n"
@@ -49,6 +29,9 @@ def send_email_notification(visitor_ip: str, page: str, ref: Optional[str], loca
             f"A new visitor has accessed your website.\n\n"
             f"Details:\n"
             f"- IP: {visitor_ip}\n"
+            f"Reason: {reason}\n"
+            f"*Endpoint:* {endpoint or '-'}\n"
+            f"*URL:* {url or '-'}\n"
             f"- User-Agent: {user_agent}\n"
             f"- Location: {location.city}, {location.region}, {location.country}\n"
             f"- Page: {page}\n"
@@ -59,8 +42,8 @@ def send_email_notification(visitor_ip: str, page: str, ref: Optional[str], loca
             f"Tracker API"
         )
 
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-            smtp.login(settings.email_address, settings.email_password)
+        with smtplib.SMTP_SSL(settings.SMTP_SERVER, settings.SMTP_PORT) as smtp:
+            smtp.login(settings.EMAIL_ADDRESS, settings.EMAIL_PASSWORD)
             smtp.send_message(msg)
 
         logger.info(
@@ -75,21 +58,23 @@ def send_email_notification(visitor_ip: str, page: str, ref: Optional[str], loca
 
 
 # Function to send Slack notification
-def send_slack_notification(visitor_ip: str, page: str, ref: Optional[str], location: Location, timestamp: datetime, user_agent: str):
+def send_slack_notification(visitor_ip: str, page: str, ref: Optional[str], location: Location, timestamp: datetime, user_agent: str, reason: str, endpoint: str, url: str):
     if is_already_notified(visitor_ip, "slack"):
         logger.info(
             f"⏳ Slack already recently notified for IP {visitor_ip}. Ignoring.")
         return
 
     try:
-        lat, lon = (location.loc.split(",") if location.loc else ("", ""))
-        map_link = f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}#map=12/{lat}/{lon}" if lat and lon else "Map unavailable"
+        map_link = f"https://maps.google.com/?q={location.lat},{location.lon}"
 
-        webhook_url = settings.slack_webhook_url
+        webhook_url = settings.SLACK_WEBHOOK_URL
 
         text = (
             f":rocket: *New visitor to your website!*\n"
             f"*IP:* `{visitor_ip}`\n"
+            f"Reason: {reason}\n"
+            f"*Endpoint:* {endpoint or '-'}\n"
+            f"*URL:* {url or '-'}\n"
             f"*Location:* {location.city}, {location.region}, {location.country}\n"
             f"*User-Agent:* {user_agent}\n"
             f"*Page:* {page}\n"

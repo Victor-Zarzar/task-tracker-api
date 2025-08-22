@@ -21,6 +21,16 @@ loggers:
     level: WARNING
     propagate: no
 
+  uvicorn:
+    level: WARNING
+    handlers: [console]
+    propagate: no
+
+  uvicorn.access:
+    level: WARNING
+    handlers: [console]
+    propagate: no
+
   app:
     level: DEBUG
     handlers: [console]

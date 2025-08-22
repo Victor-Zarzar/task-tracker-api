@@ -1,41 +1,17 @@
 from typing import Optional
-from app.logger import logger
-from fastapi import APIRouter, Request, BackgroundTasks, HTTPException, status, Query, Depends
+from app.config.logger import logger
+from app.services.request_context_service import collect_request_context
+from fastapi import APIRouter, Request, BackgroundTasks, Query, Depends
 from app.services.notifier_service import send_email_notification, send_slack_notification
-from datetime import datetime, timezone
-from app.models.tracker_model import CheckTracker, Location
+from app.models.tracker_model import CheckTracker
 from app.services.auth_service import verify_token
-import httpx
 
 
 router = APIRouter(prefix="/api/v1", tags=["Tracker API"])
 
 
-# Get location based on IP
-async def get_location(ip: str) -> Location:
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(f"https://ipinfo.io/{ip}/json")
-            if response.status_code == 200:
-                data = response.json()
-                return Location(
-                    city=data.get("city"),
-                    region=data.get("region"),
-                    country=data.get("country"),
-                    loc=data.get("loc")
-                )
-    except Exception as e:
-        logger.error(
-            f"Error fetching location: {e}")
-    return Location()
-
-
 # Route for tracker
-@router.get("/tracker",
-            summary="Tracker",
-            description="Performs the task of sending notification",
-            response_description="Status da API e dependências",
-            response_model=CheckTracker)
+@router.get("/tracker", summary="Tracker", response_model=CheckTracker)
 async def root(
     request: Request,
     background_tasks: BackgroundTasks,
@@ -45,30 +21,30 @@ async def root(
     debug: bool = Query(default=False, description="Enable debug mode"),
     _: None = Depends(verify_token)
 ):
-    visitor_ip = request.client.host
-    user_agent = request.headers.get("User-Agent", "")
-    timestamp = datetime.now(timezone.utc)
-
-    location = await get_location(visitor_ip)
+    ctx = await collect_request_context(request)
 
     logger.info(
-        f"Human visitor: {visitor_ip} - {user_agent} - page: {page} - ref: {ref}")
+        f"Human visitor: {ctx['visitor_ip']} - {ctx['user_agent']} - page: {page} - ref: {ref}")
 
     if not debug:
         background_tasks.add_task(
-            send_email_notification, visitor_ip, page, ref, location, timestamp, user_agent)
+            send_email_notification, ctx["visitor_ip"], page, ref, ctx["location"], ctx[
+                "timestamp"], ctx["user_agent"], ctx["endpoint"], ctx["url"]
+        )
         background_tasks.add_task(
-            send_slack_notification, visitor_ip, page, ref, location, timestamp, user_agent)
+            send_slack_notification, ctx["visitor_ip"], page, ref, ctx["location"], ctx[
+                "timestamp"], ctx["user_agent"], ctx["endpoint"], ctx["url"]
+        )
     else:
-        logger.warning(
-            "Debug mode active — notifications not sent.")
+        logger.warning("Debug mode active — notifications not sent.")
 
-    # Return response
     return CheckTracker(
         message="Website Tracker API - No Database Version",
-        visitor_ip=visitor_ip,
-        user_agent=user_agent,
-        timestamp_utc=timestamp,
-        location=location,
+        visitor_ip=ctx["visitor_ip"],
+        user_agent=ctx["user_agent"],
+        timestamp_utc=ctx["timestamp"],
+        location=ctx["location"],
+        url=ctx["url"],
+        endpoint=ctx["endpoint"],
         status="notification sent (debug)" if debug else "notification sent",
     )

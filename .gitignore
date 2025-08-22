@@ -53,16 +53,6 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
-# Environments
-.env
-.env.*
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
 # IDE
 .vscode/
 .idea/
@@ -103,3 +93,11 @@ __pycache__/
 
 # Py Test cache
 .pytest_cache
+
+# Enviroments
+.env
+.env.*
+
+# Nginx configuration
+nginx/crs/
+nginx/logs/

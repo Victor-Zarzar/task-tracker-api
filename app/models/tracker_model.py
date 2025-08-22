@@ -8,6 +8,8 @@ class Location(BaseModel):
     region: Optional[str] = None
     country: Optional[str] = None
     loc: Optional[str] = None
+    lat: Optional[float] = None
+    lon: Optional[float] = None
 
 
 class CheckTracker(BaseModel):
@@ -19,3 +21,13 @@ class CheckTracker(BaseModel):
     page: Optional[str] = "Website"
     ref: Optional[str] = None
     status: str
+    url: str
+    endpoint: str
+    reason: Optional[str] = None
+
+
+class HealthCheckResponse(BaseModel):
+    status: str
+    message: str
+    details: dict
+    response_time_ms: float

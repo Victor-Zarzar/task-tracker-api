@@ -1,6 +1,6 @@
-from fastapi import Header, HTTPException, status, Request
+from fastapi import Header, HTTPException, Request
 from app.config.settings import settings
-from app.logger import logger
+from app.config.logger import logger
 
 
 async def verify_token(
