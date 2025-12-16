@@ -1,22 +1,21 @@
 import logging
-from app.config.logger import logger
-from app.middlewares.block_bot_middleware import BlockBotMiddleware
-from app.middlewares.status_code_middleware import StatusCodeAlertMiddleware
+
 from fastapi import FastAPI
-from app.middlewares.cors_middleware import add_cors
-from app.services.rate_limiter import limiter
-from slowapi.middleware import SlowAPIMiddleware
-from slowapi.errors import RateLimitExceeded
-from app.handlers.exceptions import rate_limit_exceeded_handler
+
+from app.config.limiter import setup_rate_limiter
+from app.config.logger import logger
 from app.config.settings import settings
-from app.views.tracker_view import router
+from app.middlewares.block_bot_middleware import BlockBotMiddleware
+from app.middlewares.cors_middleware import add_cors
+from app.middlewares.status_code_middleware import StatusCodeAlertMiddleware
 from app.views.health_view import router as health_router
+from app.views.tracker_view import router
 
 app = FastAPI(
     title=settings.APP_NAME,
     description="Website visitor tracking API with notifications (no database)",
     version="1.0.0",
-    debug=settings.DEBUG
+    debug=settings.DEBUG,
 )
 
 # Register Middleware to block bots / critical error code
@@ -29,9 +28,7 @@ logging.getLogger("slowapi").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 # Rate Limiter
-app.state.limiter = limiter
-app.add_middleware(SlowAPIMiddleware)
-app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
+setup_rate_limiter(app, enabled=settings.ENABLE_RATE_LIMITER)
 
 # CORS Middleware
 add_cors(app)

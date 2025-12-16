@@ -1,7 +1,8 @@
-from cachetools import TTLCache
 from hashlib import sha256
 
-from app.models.tracker_model import Location
+from cachetools import TTLCache
+
+from app.models.location import Location
 
 notification_cache = TTLCache(maxsize=500, ttl=300)
 
@@ -10,19 +11,7 @@ ip_cache = TTLCache(maxsize=1000, ttl=3600)
 
 def make_cache_key(*args) -> str:
     """
-    Gera uma chave de cache normalizada e segura usando hash SHA256.
-
-    Parâmetros:
-        *args: Elementos variádicos que compõem a chave composta
-
-    Retorno:
-        String hexadecimal de 64 caracteres representando o hash SHA256
-
-    Garantias:
-        - Unicidade: Diferentes combinações geram hashes distintos
-        - Consistência: Mesma entrada sempre gera mesma saída
-        - Segurança: Previne ataques de colisão deliberada
-        - Tamanho fixo: Padroniza uso de memória no cache
+    Generates a normalized and secure cache key using SHA256 hash.
     """
     return sha256("-".join(map(str, args)).encode()).hexdigest()
 
@@ -44,20 +33,30 @@ def mark_notified(visitor_ip: str, channel: str):
 
 
 def get_from_cache(cache: TTLCache, key: str):
-
+    """
+    Retrieves a value from the cache if it exists, otherwise returns None.
+    """
     return cache.get(key)
 
 
 def set_in_cache(cache: TTLCache, key: str, value):
     cache[key] = value
+    """
+    Sets a value in the cache.
+    """
 
 
 def get_cached_location(visitor_ip: str) -> Location | None:
     key = make_cache_key(visitor_ip)
     return get_from_cache(ip_cache, key)
+    """
+    Retrieves the cached location for the given IP, or None if not cached.
+    """
 
 
 def set_cached_location(visitor_ip: str, location: Location):
-
     key = make_cache_key(visitor_ip)
     set_in_cache(ip_cache, key, location)
+    """
+    Caches the location for the given IP.
+    """

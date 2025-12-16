@@ -1,11 +1,11 @@
-from app.services.cache_service import get_cached_location, set_cached_location
 import httpx
-from app.models.tracker_model import Location
+
 from app.config.logger import logger
+from app.models.location import Location
+from app.services.cache_service import get_cached_location, set_cached_location
 
 
 async def get_location(ip: str) -> Location:
-
     cached = get_cached_location(ip)
     if cached:
         logger.debug(f"Cache hit for IP: {ip}")
@@ -24,15 +24,12 @@ async def get_location(ip: str) -> Location:
                         lat_str, lon_str = data["loc"].split(",")
                         lat, lon = float(lat_str), float(lon_str)
                     except ValueError:
-                        logger.warning(
-                            f"Failed to parse coordinates to IP {ip}")
+                        logger.warning(f"Failed to parse coordinates to IP {ip}")
 
                 location = Location(
                     city=data.get("city"),
-
                     region=data.get("region"),
                     country=data.get("country"),
-
                     lat=lat,
                     lon=lon,
                     loc=data.get("loc"),
@@ -41,11 +38,9 @@ async def get_location(ip: str) -> Location:
                 set_cached_location(ip, location)
                 return location
 
-            logger.warning(
-                f"Failed to query location - Status {resp.status_code}")
+            logger.warning(f"Failed to query location - Status {resp.status_code}")
 
     except Exception as e:
-
         logger.error(f"Location query error - IP: {ip} | Erro: {e}")
         logger.debug("Full stacktrace:", exc_info=True)
 

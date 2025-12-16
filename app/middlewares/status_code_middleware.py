@@ -1,7 +1,8 @@
 from starlette.middleware.base import BaseHTTPMiddleware
-from app.services.notifiy_detection import notify_tracker_detection
+
 from app.config.logger import logger
 from app.config.settings import settings
+from app.services.notifiy_detection import notify_tracker_detection
 from app.services.request_context_service import collect_request_context
 
 
@@ -13,7 +14,8 @@ class StatusCodeAlertMiddleware(BaseHTTPMiddleware):
 
         if response.status_code in self.CRITICAL_CODES:
             logger.warning(
-                f"[Middleware] Critical status {response.status_code} to {request.client.host}")
+                f"[Middleware] Critical status {response.status_code} to {request.client.host}"
+            )
 
             if not settings.DEBUG:
                 ctx = await collect_request_context(request)
@@ -26,11 +28,9 @@ class StatusCodeAlertMiddleware(BaseHTTPMiddleware):
                     endpoint=ctx["endpoint"],
                     url=ctx["url"],
                     page=ctx["page"],
-                    ref=ctx["ref"]
+                    ref=ctx["ref"],
                 )
             else:
-                logger.info(
-                    "[Middleware] Debug mode active — notification not sent."
-                )
+                logger.info("[Middleware] Debug mode active — notification not sent.")
 
         return response

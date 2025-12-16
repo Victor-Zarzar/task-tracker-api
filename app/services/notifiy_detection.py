@@ -1,8 +1,12 @@
 from datetime import datetime
-from app.services.notifier_service import send_slack_notification, send_email_notification
-from app.services.cache_service import is_already_notified, mark_notified
-from app.models.tracker_model import Location
+
 from app.config.logger import logger
+from app.models.location import Location
+from app.services.cache_service import is_already_notified, mark_notified
+from app.services.notifier_service import (
+    send_email_notification,
+    send_slack_notification,
+)
 
 
 def notify_tracker_detection(
@@ -14,35 +18,40 @@ def notify_tracker_detection(
     endpoint: str,
     url: str,
     page: str,
-    ref: str
+    ref: str,
 ):
-    """Send notification to Slack if not already sent"""
-    if is_already_notified(visitor_ip, "slack"):
-        logger.info(f"⏳ Notification already sent to IP {visitor_ip}")
-        return
+    """Send notification to Slack and Email if not already sent"""
 
-    send_slack_notification(
-        visitor_ip=visitor_ip,
-        page=page,
-        ref=ref,
-        location=location,
-        timestamp=timestamp,
-        user_agent=user_agent,
-        reason=reason,
-        endpoint=endpoint,
-        url=url,
-    )
-    mark_notified(visitor_ip, "slack")
+    # Slack
+    if not is_already_notified(visitor_ip, "slack"):
+        send_slack_notification(
+            visitor_ip=visitor_ip,
+            page=page,
+            ref=ref,
+            location=location,
+            timestamp=timestamp,
+            user_agent=user_agent,
+            reason=reason,
+            endpoint=endpoint,
+            url=url,
+        )
+        mark_notified(visitor_ip, "slack")
+    else:
+        logger.info(f"Slack notification already sent to IP {visitor_ip}")
 
-    send_email_notification(
-        visitor_ip=visitor_ip,
-        page=page,
-        ref=ref,
-        location=location,
-        timestamp=timestamp,
-        user_agent=user_agent,
-        reason=reason,
-        endpoint=endpoint,
-        url=url,
-    )
-    mark_notified(visitor_ip, "email")
+    # Email
+    if not is_already_notified(visitor_ip, "email"):
+        send_email_notification(
+            visitor_ip=visitor_ip,
+            page=page,
+            ref=ref,
+            location=location,
+            timestamp=timestamp,
+            user_agent=user_agent,
+            reason=reason,
+            endpoint=endpoint,
+            url=url,
+        )
+        mark_notified(visitor_ip, "email")
+    else:
+        logger.info(f"Email notification already sent to IP {visitor_ip}")

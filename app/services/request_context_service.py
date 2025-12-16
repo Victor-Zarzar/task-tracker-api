@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
+
 from fastapi import Request
+
 from app.services.location_service import get_location
 
 
@@ -24,5 +26,5 @@ async def collect_request_context(request: Request):
         "endpoint": endpoint,
         "url": full_url,
         "page": page,
-        "ref": ref
+        "ref": ref,
     }

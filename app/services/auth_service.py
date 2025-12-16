@@ -1,11 +1,11 @@
 from fastapi import Header, HTTPException, Request
-from app.config.settings import settings
+
 from app.config.logger import logger
+from app.config.settings import settings
 
 
 async def verify_token(
     token: str = Header(..., alias="X-Tracker-Token"), request: Request = None
-
 ):
     masked_key = token[:4] + "****" if token else "None"
     client_ip = request.client.host if request else "unknown"
