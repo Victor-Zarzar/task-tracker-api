@@ -7,7 +7,7 @@ from app.services.request_context_service import collect_request_context
 
 
 class StatusCodeAlertMiddleware(BaseHTTPMiddleware):
-    CRITICAL_CODES = {401, 403, 429, 503}
+    CRITICAL_CODES = {401, 403, 429, 500, 503}
 
     async def dispatch(self, request, call_next):
         response = await call_next(request)

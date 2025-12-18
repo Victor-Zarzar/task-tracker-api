@@ -17,6 +17,7 @@ async def collect_request_context(request: Request):
     full_url = str(request.url)
     page = request.query_params.get("page", "Website")
     ref = request.query_params.get("ref")
+    reason = request.query_params.get("reason", "Human visitor")
 
     return {
         "visitor_ip": visitor_ip,
@@ -27,4 +28,5 @@ async def collect_request_context(request: Request):
         "url": full_url,
         "page": page,
         "ref": ref,
+        "reason": reason,
     }

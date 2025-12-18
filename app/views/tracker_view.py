@@ -1,65 +1,45 @@
-from typing import Optional
-
 from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request
-from typing_extensions import ReadOnly
 
 from app.config.logger import logger
+from app.config.settings import settings
 from app.models.check import CheckTracker
 from app.services.auth_service import verify_token
-from app.services.notifier_service import (
-    send_email_notification,
-    send_slack_notification,
-)
 from app.services.request_context_service import collect_request_context
+from app.tasks.tracker_tasks import notify_visitor_task
 
 router = APIRouter(prefix="/api/v1", tags=["Tracker API"])
 
 
-# Route for tracker
 @router.get("/tracker", summary="Tracker", response_model=CheckTracker)
 async def root(
     request: Request,
     background_tasks: BackgroundTasks,
-    page: str = Query(default="Website"),
-    ref: Optional[str] = Query(default=None, description="Referrer or campaign"),
-    debug: bool = Query(default=False, description="Enable debug mode"),
+    page: str = Query(default="www.example.com"),
+    ref: str | None = Query(default=None),
     _: None = Depends(verify_token),
 ):
     ctx = await collect_request_context(request)
 
-    reason = "human_visitor"
-
     logger.info(
-        f"Human visitor: {ctx['visitor_ip']} - {ctx['user_agent']} - page: {page} - ref: {ref}"
+        f"Human visitor: {ctx['visitor_ip']} - {ctx['user_agent']} "
+        f"- page: {page} - ref: {ref}"
     )
 
-    if not debug:
-        background_tasks.add_task(
-            send_email_notification,
-            ctx["visitor_ip"],
-            page,
-            ref,
-            ctx["location"],
-            ctx["timestamp"],
-            ctx["user_agent"],
-            reason=reason,
-            endpoint=ctx["endpoint"],
-            url=ctx["url"],
-        )
-        background_tasks.add_task(
-            send_slack_notification,
-            ctx["visitor_ip"],
-            page,
-            ref,
-            ctx["location"],
-            ctx["timestamp"],
-            ctx["user_agent"],
-            reason=reason,
-            endpoint=ctx["endpoint"],
-            url=ctx["url"],
-        )
+    if settings.DEBUG:
+        logger.warning("DEBUG mode active — notifications not sent.")
     else:
-        logger.warning("Debug mode active — notifications not sent.")
+        background_tasks.add_task(
+            notify_visitor_task,
+            visitor_ip=ctx["visitor_ip"],
+            page=page,
+            ref=ref,
+            location=ctx["location"],
+            timestamp=ctx["timestamp"],
+            user_agent=ctx["user_agent"],
+            reason=ctx["reason"],
+            endpoint=ctx["endpoint"],
+            url=ctx["url"],
+        )
 
     return CheckTracker(
         message="Website Tracker API - No Database Version",
@@ -67,8 +47,10 @@ async def root(
         user_agent=ctx["user_agent"],
         timestamp_utc=ctx["timestamp"],
         location=ctx["location"],
+        page=page,
+        ref=ref,
         url=ctx["url"],
         endpoint=ctx["endpoint"],
-        status="notification sent (debug)" if debug else "notification sent",
-        ReadOnly=True,
+        status="debug" if settings.DEBUG else "notification sent",
+        reason=ctx["reason"],
     )

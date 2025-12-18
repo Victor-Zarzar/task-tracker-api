@@ -90,7 +90,7 @@ def send_slack_notification(
         webhook_url = settings.SLACK_WEBHOOK_URL
 
         text = (
-            f":rocket: *New visitor to your website!*\n"
+            f"*New visitor to your website!*\n"
             f"*IP:* `{visitor_ip}`\n"
             f"Reason: {reason}\n"
             f"*Endpoint:* {endpoint or '-'}\n"

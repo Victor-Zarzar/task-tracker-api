@@ -11,7 +11,7 @@ async def verify_token(
     client_ip = request.client.host if request else "unknown"
     """
     Dependency to verify the Tracker API token.
-    Raises 403 if invalid.
+    Raises 401 if invalid.
     """
     if token != settings.TOKEN:
         logger.warning(

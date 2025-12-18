@@ -11,7 +11,7 @@ build-dev:
 
 up-dev:
 	@echo "Uploading development environment on port $(PORT)..."
-	docker compose -f $(DEV_COMPOSE) up	
+	docker compose -f $(DEV_COMPOSE) up
 
 down-dev:
 	@echo "Stopping server..."
@@ -20,7 +20,7 @@ down-dev:
 
 logs-dev:
 	@echo "Development environment logs..."
-	docker compose -f $(DEV_COMPOSE) logs -f	
+	docker compose -f $(DEV_COMPOSE) logs -f
 
 test:
 	@echo "Running tests..."
@@ -41,7 +41,7 @@ clean:
 
 build-prod:
 	@echo "Building development image prod..."
-	docker compose -f $(PROD_COMPOSE) build	
+	docker compose -f $(PROD_COMPOSE) build
 
 up-prod:
 	@echo "🚀 Starting production environment with Docker Compose..."
