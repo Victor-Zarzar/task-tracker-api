@@ -13,7 +13,6 @@ class CheckTracker(BaseModel):
     timestamp_utc: datetime
     location: Optional[Location] = None
     page: Optional[str] = None
-    ref: Optional[str] = None
     status: str
     url: str
     endpoint: str

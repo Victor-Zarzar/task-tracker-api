@@ -16,7 +16,6 @@ async def collect_request_context(request: Request):
     endpoint = request.url.path
     full_url = str(request.url)
     page = request.query_params.get("page", "Website")
-    ref = request.query_params.get("ref")
     reason = request.query_params.get("reason", "Human visitor")
 
     return {
@@ -27,6 +26,5 @@ async def collect_request_context(request: Request):
         "endpoint": endpoint,
         "url": full_url,
         "page": page,
-        "ref": ref,
         "reason": reason,
     }

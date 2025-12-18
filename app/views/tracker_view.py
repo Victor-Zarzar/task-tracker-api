@@ -15,14 +15,12 @@ async def root(
     request: Request,
     background_tasks: BackgroundTasks,
     page: str = Query(default="www.example.com"),
-    ref: str | None = Query(default=None),
     _: None = Depends(verify_token),
 ):
     ctx = await collect_request_context(request)
 
     logger.info(
-        f"Human visitor: {ctx['visitor_ip']} - {ctx['user_agent']} "
-        f"- page: {page} - ref: {ref}"
+        f"Human visitor: {ctx['visitor_ip']} - {ctx['user_agent']} - page: {page}"
     )
 
     if settings.DEBUG:
@@ -32,7 +30,6 @@ async def root(
             notify_visitor_task,
             visitor_ip=ctx["visitor_ip"],
             page=page,
-            ref=ref,
             location=ctx["location"],
             timestamp=ctx["timestamp"],
             user_agent=ctx["user_agent"],
@@ -48,7 +45,6 @@ async def root(
         timestamp_utc=ctx["timestamp"],
         location=ctx["location"],
         page=page,
-        ref=ref,
         url=ctx["url"],
         endpoint=ctx["endpoint"],
         status="debug" if settings.DEBUG else "notification sent",

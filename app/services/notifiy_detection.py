@@ -18,7 +18,6 @@ def notify_tracker_detection(
     endpoint: str,
     url: str,
     page: str,
-    ref: str,
 ):
     """Send notification to Slack and Email if not already sent"""
 
@@ -27,7 +26,6 @@ def notify_tracker_detection(
         send_slack_notification(
             visitor_ip=visitor_ip,
             page=page,
-            ref=ref,
             location=location,
             timestamp=timestamp,
             user_agent=user_agent,
@@ -44,7 +42,6 @@ def notify_tracker_detection(
         send_email_notification(
             visitor_ip=visitor_ip,
             page=page,
-            ref=ref,
             location=location,
             timestamp=timestamp,
             user_agent=user_agent,

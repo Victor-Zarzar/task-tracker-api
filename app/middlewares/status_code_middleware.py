@@ -28,7 +28,6 @@ class StatusCodeAlertMiddleware(BaseHTTPMiddleware):
                     endpoint=ctx["endpoint"],
                     url=ctx["url"],
                     page=ctx["page"],
-                    ref=ctx["ref"],
                 )
             else:
                 logger.info("[Middleware] Debug mode active — notification not sent.")

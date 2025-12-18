@@ -1,7 +1,6 @@
 import smtplib
 from datetime import datetime
 from email.message import EmailMessage
-from typing import Optional
 
 import requests
 
@@ -15,7 +14,6 @@ from app.services.cache_service import is_already_notified, mark_notified
 def send_email_notification(
     visitor_ip: str,
     page: str,
-    ref: Optional[str],
     location: Location,
     timestamp: datetime,
     user_agent: str,
@@ -46,7 +44,6 @@ def send_email_notification(
             f"- User-Agent: {user_agent}\n"
             f"- Location: {location.city}, {location.region}, {location.country}\n"
             f"- Page: {page}\n"
-            f"- Reference: {ref}\n"
             f"- Date and Time (UTC): {timestamp.strftime('%d/%m/%Y %H:%M:%S')}\n"
             f"- See on map: {map_link}\n\n"
             f"Sincerely,\n"
@@ -58,7 +55,7 @@ def send_email_notification(
             smtp.send_message(msg)
 
         logger.info(
-            f"Email sent — IP: {visitor_ip}, Page: {page}, Ref: {ref}, User-Agent: {user_agent}"
+            f"Email sent — IP: {visitor_ip}, Page: {page}, User-Agent: {user_agent}"
         )
 
         # Mark in cache
@@ -72,7 +69,6 @@ def send_email_notification(
 def send_slack_notification(
     visitor_ip: str,
     page: str,
-    ref: Optional[str],
     location: Location,
     timestamp: datetime,
     user_agent: str,
@@ -98,7 +94,6 @@ def send_slack_notification(
             f"*Location:* {location.city}, {location.region}, {location.country}\n"
             f"*User-Agent:* {user_agent}\n"
             f"*Page:* {page}\n"
-            f"*Reference:* {ref}\n"
             f"*Date/Time (UTC):* {timestamp.strftime('%d/%m/%Y %H:%M:%S')}\n"
             f"*Map:* {map_link}"
         )
@@ -112,7 +107,7 @@ def send_slack_notification(
                 f"Slack webhook error: {response.status_code} - {response.text}"
             )
         logger.info(
-            f"Slack notified — IP: {visitor_ip}, Page: {page}, Ref: {ref}, User-Agent: {user_agent}"
+            f"Slack notified — IP: {visitor_ip}, Page: {page}, User-Agent: {user_agent}"
         )
 
         # Mark in cache

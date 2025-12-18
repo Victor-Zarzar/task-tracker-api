@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from app.config.logger import logger
 from app.models.location import Location
@@ -13,7 +12,6 @@ def notify_visitor_task(
     *,
     visitor_ip: str,
     page: str,
-    ref: Optional[str],
     location: Location,
     timestamp: datetime,
     user_agent: str,
@@ -28,7 +26,6 @@ def notify_visitor_task(
         send_email_notification(
             visitor_ip=visitor_ip,
             page=page,
-            ref=ref,
             location=location,
             timestamp=timestamp,
             user_agent=user_agent,
@@ -40,7 +37,6 @@ def notify_visitor_task(
         send_slack_notification(
             visitor_ip=visitor_ip,
             page=page,
-            ref=ref,
             location=location,
             timestamp=timestamp,
             user_agent=user_agent,

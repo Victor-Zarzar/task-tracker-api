@@ -51,7 +51,6 @@ class BlockBotMiddleware(BaseHTTPMiddleware):
                         endpoint=ctx["endpoint"],
                         url=ctx["url"],
                         page=ctx["page"],
-                        ref=ctx["ref"],
                     )
                 except Exception as e:
                     logger.error(f"Notify tracker failed: {e}")
