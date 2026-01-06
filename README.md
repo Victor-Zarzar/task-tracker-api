@@ -1,20 +1,96 @@
-# 📦 Task Tracker API
+<h1 align="center" id="header">
+  Task Tracker API - Python FastAPI Application
+</h1>
 
-A Python-based API to manage and track tasks with Docker support for development and production environments.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+  <img src="https://img.shields.io/badge/Pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white" alt="Pytest">
+</p>
 
-## Requirements
+<p align="center">
+  Professional task management API built with FastAPI, featuring email notifications, Slack integration, rate limiting, and containerized deployment.
+</p>
 
-- Docker
-- Docker Compose
-- make
+---
 
-## Setup
+<h2 id="stack">
+  Tech Stack
+</h2>
 
-Create a `.env.dev` file in the project root with your configuration:
+<p>
+<img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Python-Dark.svg" width="48" title="Python"> 
+<img src="https://github.com/tandpfun/skill-icons/blob/main/icons/FastAPI.svg" width="48" title="FastAPI">
+<img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Docker.svg" width="48" title="Docker">
+<img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Grafana-Dark.svg" width="48" title="Grafana">
+</p>
 
-```env.dev
+### Core Technologies
+
+- **Python 3.11+** - Modern Python with latest features
+- **FastAPI** - High-performance async web framework
+- **Docker** - Containerized deployment
+- **Pytest** - Comprehensive testing framework
+
+### Features & Integrations
+
+- **CORS Support** - Configurable cross-origin resource sharing
+- **Rate Limiting** - API endpoint protection and request throttling
+- **Email Notifications** - SMTP integration with configurable providers
+- **Slack Webhooks** - Real-time notifications to Slack channels
+- **Token Authentication** - Secure API access control
+- **Environment-based Configuration** - Separate dev/prod settings
+- **Logging** - Configurable log levels and monitoring
+- **Hot Reload** - Development mode with automatic code reloading
+
+---
+
+<h2 id="prerequisites">
+  Prerequisites
+</h2>
+
+Before starting, ensure you have the following installed:
+
+- [Docker](https://www.docker.com/) - Container platform
+- [Docker Compose](https://docs.docker.com/compose/) - Multi-container orchestration
+- [Make](https://www.gnu.org/software/make/) - Build automation
+- [Git](https://git-scm.com/) - Version control
+
+> Optional: [Python 3.11+](https://www.python.org/) if you prefer running the app without Docker.
+
+---
+
+<h2 id="installation">
+  Installation & Setup
+</h2>
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Victor-Zarzar/task-tracker-api
+cd task-tracker-api
+```
+
+### 2. Open in your editor
+
+```bash
+zed .   # Zed Editor
+```
+
+### 3. Environment Configuration
+
+Copy the example environment file and configure your credentials:
+
+```bash
+cp .env.example .env.dev
+```
+
+Then edit `.env.dev` with your actual values:
+
+```env
 # App Info
-APP_NAME=Website Tracker API
+APP_NAME=Task Tracker API
 DEBUG=false
 ENVIRONMENT=development
 
@@ -27,8 +103,8 @@ RATE_LIMIT_WINDOW=60
 
 # Email Configuration
 EMAIL_ADDRESS=your_email@example.com
-EMAIL_PASSWORD=your_email_password
-SMTP_SERVER=smtp.example.com
+EMAIL_PASSWORD=your_app_password
+SMTP_SERVER=smtp.gmail.com
 SMTP_PORT=587
 
 # Slack Webhook
@@ -38,86 +114,242 @@ SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
 LOG_LEVEL=DEBUG
 
 # Token
-TOKEN="mytoken"
+TOKEN=your_secure_token_here
 ```
 
-## Available Commands
+**Key configurations needed:**
 
-Use `make help` to see all commands with detailed descriptions.
+- **SMTP**: Email account and app password for notifications
+- **Slack**: [Webhook URL](https://api.slack.com/messaging/webhooks) for Slack integration
+- **Token**: Secure authentication token for API access
 
-### Development
+> **Important:** Never commit your `.env.dev` or `.env.prod` files to version control. They should be in `.gitignore`.
+
+### 4. Build Development Environment
+
+```bash
+make build-dev
+```
+
+---
+
+<h2 id="usage">
+  Usage
+</h2>
+
+### Available Commands
+
+View all available Make commands:
+
+```bash
+make help
+```
+
+### Local Development
+
+Start the development server (port 8000):
+
+```bash
+make up-dev
+```
+
+Access the API at:
+
+- **API**: `http://localhost:8000`
+- **API Documentation**: `http://localhost:8000/docs`
+- **Alternative Docs**: `http://localhost:8000/redoc`
+
+### Docker Deployment
+
+#### Development Commands
 
 ```bash
 make build-dev    # Build development Docker image
-make up-dev       # Start development server on port 8000
+make up-dev       # Start development server with hot reload
 make down-dev     # Stop development server
-make logs-dev     # View development logs
+make logs-dev     # View development logs in real-time
 make test         # Run tests with pytest
 ```
 
-### Production
+#### Production Commands
 
 ```bash
-make up-prod      # Start production environment
-make down-prod    # Stop production environment  
+make up-prod      # Start production server
+make down-prod    # Stop production server
 make logs-prod    # View production logs
 ```
 
-### Help
+#### View Logs
 
 ```bash
-make help         # Show all available commands with descriptions
+make logs-dev     # Development logs
+make logs-prod    # Production logs
 ```
 
-## Quick Start
-
-### 1. Setup Environment
+Or directly with Docker:
 
 ```bash
-# Create .env file with your configuration (see Setup section above)
-cp .env.example .env  # Edit with your values
+docker logs -f task-tracker-api-dev
+docker logs -f task-tracker-api-prod
 ```
 
-### 2. Development Environment
+---
 
-```bash
-# Start development server
-make up-dev
+<h2 id="makefile-commands">
+  Makefile Commands Reference
+</h2>
 
-# Server will be available at http://localhost:8000
-# Hot reload enabled for development
-```
+| Command          | Description                                   |
+| ---------------- | --------------------------------------------- |
+| `make build-dev` | Build development Docker image                |
+| `make up-dev`    | Start development server with hot reload      |
+| `make down-dev`  | Stop and remove development containers        |
+| `make logs-dev`  | Display development logs in real-time         |
+| `make up-prod`   | Start production server (detached mode)       |
+| `make down-prod` | Stop and remove production containers         |
+| `make logs-prod` | Display production logs in real-time          |
+| `make test`      | Run automated tests with pytest               |
+| `make help`      | Show all available commands with descriptions |
 
-### 3. Production Environment
+---
 
-```bash
-# Start production server
-make up-prod
+<h2 id="development">
+  Development
+</h2>
 
-# Stop production server
-make down-prod
-```
+### Running Tests
 
-### 4. Running Tests
+Execute the test suite with pytest:
 
 ```bash
 make test
 ```
 
-## Project Structure
+Or manually with Docker:
 
-```
-.
-├── app/                      # Application code
-├── tests/                    # Test files
-├── docker-compose.dev.yaml   # Development configuration
-├── docker-compose.prod.yaml  # Production configuration
-├── Makefile                  # Task automation
-└── README.md                 # This file
+```bash
+docker-compose -f docker-compose.dev.yaml run --rm app pytest
 ```
 
-## Notes
+### API Documentation
 
-- Development environment runs with hot reload enabled
-- Production environment runs in detached mode with optimized settings
-- Use `make help` to see all available commands with descriptions
+FastAPI provides automatic interactive API documentation:
+
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
+
+---
+
+<h2 id="project-structure">
+  Project Structure
+</h2>
+
+```
+task-tracker-api/
+├── app/                        # Application code
+│   ├── main.py                 # FastAPI application entry point
+│   ├── routers/                # API route handlers
+│   ├── models/                 # Data models
+│   ├── services/               # Business logic
+│   └── utils/                  # Utility functions
+├── tests/                      # Test files
+│   ├── test_api.py             # API endpoint tests
+│   └── test_services.py        # Service layer tests
+├── docker-compose.dev.yaml     # Development configuration
+├── docker-compose.prod.yaml    # Production configuration
+├── Dockerfile                  # Docker image definition
+├── requirements.txt            # Python dependencies
+├── .env.example                # Environment variables template
+├── .env.dev                    # Development environment (not in git)
+├── .env.prod                   # Production environment (not in git)
+├── Makefile                    # Build automation
+└── README.md                   # This file
+```
+
+---
+
+<h2 id="api-endpoints">
+  API Endpoints
+</h2>
+
+### Authentication
+
+All endpoints require a valid token in the `Authorization` header:
+
+```bash
+Authorization: Bearer your_token_here
+```
+
+---
+
+<h2 id="deployment">
+   Deployment
+</h2>
+
+### Docker Production
+
+Build and run the production container:
+
+```bash
+# Start production environment
+make up-prod
+
+# Check logs
+make logs-prod
+
+# Stop when needed
+make down-prod
+```
+
+---
+
+<h2 id="contributing">
+  Contributing
+</h2>
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+### Development Guidelines
+
+- Write tests for new features
+- Follow PEP 8 style guide
+- Update documentation as needed
+- Ensure all tests pass before submitting PR
+
+---
+
+**Email notifications not working:**
+
+- Ensure SMTP credentials are correct
+- For Gmail, use an [App Password](https://support.google.com/accounts/answer/185833)
+- Check firewall settings for SMTP port
+
+---
+
+<h2 id="license">
+  License
+</h2>
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<h2 id="contact">
+  Contact
+</h2>
+
+Victor Zarzar - [@Victor-Zarzar](https://github.com/Victor-Zarzar)
+
+Project Link: [https://github.com/Victor-Zarzar/task-tracker-api](https://github.com/Victor-Zarzar/task-tracker-api)
+
+---
+
+<p align="center">
+  Made with ❤️ by Victor Zarzar
+</p>

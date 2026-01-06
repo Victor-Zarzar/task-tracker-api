@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import AnyHttpUrl, BaseModel
 
 from app.models.location import Location
 
@@ -12,7 +12,7 @@ class CheckTracker(BaseModel):
     user_agent: str
     timestamp_utc: datetime
     location: Optional[Location] = None
-    page: Optional[str] = None
+    page: AnyHttpUrl | None = None
     status: str
     url: str
     endpoint: str

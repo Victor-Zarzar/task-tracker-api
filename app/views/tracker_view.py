@@ -3,6 +3,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request
 from app.config.logger import logger
 from app.config.settings import settings
 from app.models.check import CheckTracker
+from app.schemas.tracker import TrackerSchema
 from app.services.auth_service import verify_token
 from app.services.request_context_service import collect_request_context
 from app.tasks.tracker_tasks import notify_visitor_task
@@ -14,9 +15,10 @@ router = APIRouter(prefix="/api/v1", tags=["Tracker API"])
 async def root(
     request: Request,
     background_tasks: BackgroundTasks,
-    page: str = Query(default="www.example.com"),
+    query: TrackerSchema = Depends(),
     _: None = Depends(verify_token),
 ):
+    page = str(query.page)
     ctx = await collect_request_context(request)
 
     logger.info(
