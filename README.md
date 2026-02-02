@@ -24,7 +24,6 @@
 <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Python-Dark.svg" width="48" title="Python"> 
 <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/FastAPI.svg" width="48" title="FastAPI">
 <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Docker.svg" width="48" title="Docker">
-<img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Grafana-Dark.svg" width="48" title="Grafana">
 </p>
 
 ### Core Technologies
@@ -84,38 +83,7 @@ zed .   # Zed Editor
 Copy the example environment file and configure your credentials:
 
 ```bash
-cp .env.example .env.dev
-```
-
-Then edit `.env.dev` with your actual values:
-
-```env
-# App Info
-APP_NAME=Task Tracker API
-DEBUG=false
-ENVIRONMENT=development
-
-# CORS
-ALLOWED_ORIGINS=["*"]
-
-# Rate Limiting
-RATE_LIMIT_REQUESTS=5
-RATE_LIMIT_WINDOW=60
-
-# Email Configuration
-EMAIL_ADDRESS=your_email@example.com
-EMAIL_PASSWORD=your_app_password
-SMTP_SERVER=smtp.gmail.com
-SMTP_PORT=587
-
-# Slack Webhook
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
-
-# Logs
-LOG_LEVEL=DEBUG
-
-# Token
-TOKEN=your_secure_token_here
+cp .env-example .env.dev
 ```
 
 **Key configurations needed:**
