@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import Request
 
@@ -11,7 +11,7 @@ async def collect_request_context(request: Request):
     """
     visitor_ip = request.client.host
     user_agent = request.headers.get("User-Agent", "")
-    timestamp = datetime.now(timezone.utc)
+    timestamp = datetime.now(UTC)
     location = await get_location(visitor_ip)
     endpoint = request.url.path
     full_url = str(request.url)

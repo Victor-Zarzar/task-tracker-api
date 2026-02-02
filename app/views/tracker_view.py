@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Request
 
 from app.config.logger import logger
 from app.config.settings import settings

@@ -10,7 +10,6 @@ from app.models.location import Location
 from app.services.cache_service import is_already_notified, mark_notified
 
 
-# Function to send email notification
 def send_email_notification(
     visitor_ip: str,
     page: str,
@@ -58,14 +57,12 @@ def send_email_notification(
             f"Email sent — IP: {visitor_ip}, Page: {page}, User-Agent: {user_agent}"
         )
 
-        # Mark in cache
         mark_notified(visitor_ip, "email")
 
     except Exception as e:
         logger.error(f"Error sending email: {e}")
 
 
-# Function to send Slack notification
 def send_slack_notification(
     visitor_ip: str,
     page: str,
@@ -110,7 +107,6 @@ def send_slack_notification(
             f"Slack notified — IP: {visitor_ip}, Page: {page}, User-Agent: {user_agent}"
         )
 
-        # Mark in cache
         mark_notified(visitor_ip, "slack")
 
     except Exception as e:

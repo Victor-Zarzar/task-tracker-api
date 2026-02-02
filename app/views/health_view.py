@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, Request
 
@@ -20,13 +20,13 @@ async def health_check(
     request: Request,
     _: None = Depends(verify_token),
 ):
-    start_time = datetime.now(timezone.utc)
+    start_time = datetime.now(UTC)
 
     dependencies = {
         "api": "ok",
     }
 
-    end_time = datetime.now(timezone.utc)
+    end_time = datetime.now(UTC)
     response_time_ms = (end_time - start_time).total_seconds() * 1000
 
     logger.info(

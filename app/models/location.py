@@ -1,12 +1,10 @@
-from typing import Optional
-
 from pydantic import BaseModel
 
 
 class Location(BaseModel):
-    city: Optional[str] = None
-    region: Optional[str] = None
-    country: Optional[str] = None
-    loc: Optional[str] = None
-    lat: Optional[float] = None
-    lon: Optional[float] = None
+    city: str | None = None
+    region: str | None = None
+    country: str | None = None
+    loc: str | None = None
+    lat: float | None = None
+    lon: float | None = None
