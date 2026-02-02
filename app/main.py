@@ -18,19 +18,15 @@ app = FastAPI(
     debug=settings.DEBUG,
 )
 
-# Register Middleware to block bots / critical error code
 app.add_middleware(BlockBotMiddleware)
 app.add_middleware(StatusCodeAlertMiddleware)
 
-# Logs
 logger.info("Logger loaded successfully")
 logging.getLogger("slowapi").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
-# Rate Limiter
 setup_rate_limiter(app, enabled=settings.ENABLE_RATE_LIMITER)
 
-# CORS Middleware
 add_cors(app)
 
 # Routes

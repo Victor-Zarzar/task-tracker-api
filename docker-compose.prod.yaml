@@ -5,6 +5,5 @@ services:
       dockerfile: Dockerfile.prod
     ports:
       - "8006:8006"
-    environment:
-      - PYTHONUNBUFFERED=1
-      - ENVIRONMENT=production
+    env_file:
+      - .env.prod

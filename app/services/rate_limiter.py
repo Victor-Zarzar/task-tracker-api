@@ -5,5 +5,4 @@ from app.config.settings import settings
 
 limit_string = f"{settings.RATE_LIMIT_REQUESTS}/{settings.RATE_LIMIT_WINDOW} second"
 
-# Initialize the rate limiter with the configured limits
 limiter = Limiter(key_func=get_remote_address, default_limits=[limit_string])

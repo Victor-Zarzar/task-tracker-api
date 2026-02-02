@@ -4,7 +4,6 @@ from starlette.responses import JSONResponse
 
 from app.config.logger import logger
 from app.config.settings import settings
-from app.services.location_service import get_location
 from app.services.notifiy_detection import notify_tracker_detection
 from app.services.request_context_service import collect_request_context
 

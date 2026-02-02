@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import AnyHttpUrl, BaseModel
 
@@ -11,9 +10,9 @@ class CheckTracker(BaseModel):
     visitor_ip: str
     user_agent: str
     timestamp_utc: datetime
-    location: Optional[Location] = None
+    location: Location | None = None
     page: AnyHttpUrl | None = None
     status: str
     url: str
     endpoint: str
-    reason: Optional[str] = None
+    reason: str | None = None

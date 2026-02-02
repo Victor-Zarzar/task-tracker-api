@@ -7,6 +7,7 @@
   <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
   <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
   <img src="https://img.shields.io/badge/Pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white" alt="Pytest">
+  <img src="https://img.shields.io/badge/CI/CD-GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" alt="GitHub Actions">
 </p>
 
 <p align="center">
@@ -23,7 +24,6 @@
 <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Python-Dark.svg" width="48" title="Python"> 
 <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/FastAPI.svg" width="48" title="FastAPI">
 <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Docker.svg" width="48" title="Docker">
-<img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Grafana-Dark.svg" width="48" title="Grafana">
 </p>
 
 ### Core Technologies
@@ -83,38 +83,7 @@ zed .   # Zed Editor
 Copy the example environment file and configure your credentials:
 
 ```bash
-cp .env.example .env.dev
-```
-
-Then edit `.env.dev` with your actual values:
-
-```env
-# App Info
-APP_NAME=Task Tracker API
-DEBUG=false
-ENVIRONMENT=development
-
-# CORS
-ALLOWED_ORIGINS=["*"]
-
-# Rate Limiting
-RATE_LIMIT_REQUESTS=5
-RATE_LIMIT_WINDOW=60
-
-# Email Configuration
-EMAIL_ADDRESS=your_email@example.com
-EMAIL_PASSWORD=your_app_password
-SMTP_SERVER=smtp.gmail.com
-SMTP_PORT=587
-
-# Slack Webhook
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
-
-# Logs
-LOG_LEVEL=DEBUG
-
-# Token
-TOKEN=your_secure_token_here
+cp .env-example .env.dev
 ```
 
 **Key configurations needed:**
@@ -164,11 +133,14 @@ Access the API at:
 #### Development Commands
 
 ```bash
+make gen-secret   # Generate a new token
 make build-dev    # Build development Docker image
 make up-dev       # Start development server with hot reload
 make down-dev     # Stop development server
 make logs-dev     # View development logs in real-time
 make test         # Run tests with pytest
+make format       # Format code with Ruff
+make lint         # Lint code with pylint
 ```
 
 #### Production Commands
@@ -199,27 +171,20 @@ docker logs -f task-tracker-api-prod
   Makefile Commands Reference
 </h2>
 
-| Command          | Description                                   |
-| ---------------- | --------------------------------------------- |
-| `make build-dev` | Build development Docker image                |
-| `make up-dev`    | Start development server with hot reload      |
-| `make down-dev`  | Stop and remove development containers        |
-| `make logs-dev`  | Display development logs in real-time         |
-| `make up-prod`   | Start production server (detached mode)       |
-| `make down-prod` | Stop and remove production containers         |
-| `make logs-prod` | Display production logs in real-time          |
-| `make test`      | Run automated tests with pytest               |
-| `make help`      | Show all available commands with descriptions |
-
----
-
-<h2 id="development">
-  Development
-</h2>
-
-### Running Tests
-
-Execute the test suite with pytest:
+| Command           | Description                                   |
+| ----------------- | --------------------------------------------- |
+| `make build-dev`  | Build development Docker image                |
+| `make up-dev`     | Start development server with hot reload      |
+| `make down-dev`   | Stop and remove development containers        |
+| `make logs-dev`   | Display development logs in real-time         |
+| `make up-prod`    | Start production server (detached mode)       |
+| `make down-prod`  | Stop and remove production containers         |
+| `make logs-prod`  | Display production logs in real-time          |
+| `make test`       | Run automated tests with pytest               |
+| `make format`     | Format code with Ruff                         |
+| `make lint`       | Lint code with pylint                         |
+| `make gen-secret` | Generate a new token                          |
+| `make help`       | Show all available commands with descriptions |
 
 ```bash
 make test
@@ -228,7 +193,7 @@ make test
 Or manually with Docker:
 
 ```bash
-docker-compose -f docker-compose.dev.yaml run --rm app pytest
+docker-compose -f docker-compose.dev.yaml exec web pytest
 ```
 
 ### API Documentation
@@ -262,8 +227,70 @@ task-tracker-api/
 ├── .env.example                # Environment variables template
 ├── .env.dev                    # Development environment (not in git)
 ├── .env.prod                   # Production environment (not in git)
+├── pyproject.toml              # Python project configuration
 ├── Makefile                    # Build automation
 └── README.md                   # This file
+```
+
+---
+
+<h2 id="code-quality">
+  Code Quality & Formatting
+</h2>
+
+### Ruff Configuration
+
+This project uses [Ruff](https://docs.astral.sh/ruff/) for fast Python linting and code formatting. The configuration is defined in `pyproject.toml`:
+
+```toml
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP"]
+ignore = ["E501"]
+fixable = ["ALL"]
+unfixable = []
+```
+
+**Configuration details:**
+
+- **Line length**: 88 characters (Black compatible)
+- **Target version**: Python 3.12
+- **Quote style**: Double quotes for strings
+- **Linting rules**:
+  - `E`, `W` - pycodestyle errors and warnings
+  - `F` - Pyflakes
+  - `I` - isort (import sorting)
+  - `B` - flake8-bugbear
+  - `UP` - pyupgrade (modern Python syntax)
+- **Ignored rules**: `E501` (line too long)
+
+### Running Code Quality Tools
+
+All code quality tools run inside the Docker container:
+
+```bash
+# Format code with Ruff
+make format
+
+# Lint code with pylint
+make lint
+```
+
+Or directly with Docker Compose:
+
+```bash
+# Format code
+docker compose -f docker-compose.dev.yaml exec web ruff format app
+
+# Lint code
+docker compose -f docker-compose.dev.yaml exec web pylint app
 ```
 
 ---
@@ -351,5 +378,5 @@ Project Link: [https://github.com/Victor-Zarzar/task-tracker-api](https://github
 ---
 
 <p align="center">
-  Made with ❤️ by Victor Zarzar
+  Made with by Victor Zarzar
 </p>

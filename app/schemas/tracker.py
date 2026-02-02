@@ -1,4 +1,4 @@
-from typing import Annotated, Union
+from typing import Annotated
 
 from pydantic import AnyHttpUrl, BaseModel, StringConstraints, field_validator
 
@@ -11,7 +11,7 @@ class TrackerSchema(BaseModel):
 
     @field_validator("page", mode="before")
     @classmethod
-    def normalize_page(cls, v: Union[str, AnyHttpUrl]):
+    def normalize_page(cls, v: str | AnyHttpUrl):
         if isinstance(v, AnyHttpUrl):
             return v
 

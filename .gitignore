@@ -98,6 +98,6 @@ __pycache__/
 .env
 .env.*
 
-# Nginx configuration
-nginx/crs/
-nginx/logs/
+# Ruff
+.ruff_cache/
+.ruff.toml

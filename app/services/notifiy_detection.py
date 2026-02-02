@@ -21,7 +21,6 @@ def notify_tracker_detection(
 ):
     """Send notification to Slack and Email if not already sent"""
 
-    # Slack
     if not is_already_notified(visitor_ip, "slack"):
         send_slack_notification(
             visitor_ip=visitor_ip,
@@ -37,7 +36,6 @@ def notify_tracker_detection(
     else:
         logger.info(f"Slack notification already sent to IP {visitor_ip}")
 
-    # Email
     if not is_already_notified(visitor_ip, "email"):
         send_email_notification(
             visitor_ip=visitor_ip,

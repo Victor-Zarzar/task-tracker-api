@@ -8,7 +8,7 @@ from app.config.settings import settings
 
 def setup_logger():
     config_path = Path(__file__).resolve().parent.parent.parent / "logger.yaml"
-    with open(config_path, "r") as f:
+    with open(config_path) as f:
         config = yaml.safe_load(f)
 
     log_level = settings.LOG_LEVEL.upper() if settings.LOG_LEVEL else "INFO"
