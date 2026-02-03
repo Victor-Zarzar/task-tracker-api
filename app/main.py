@@ -29,6 +29,5 @@ setup_rate_limiter(app, enabled=settings.ENABLE_RATE_LIMITER)
 
 add_cors(app)
 
-# Routes
 app.include_router(router)
 app.include_router(health_router)

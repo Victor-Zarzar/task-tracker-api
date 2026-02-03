@@ -19,8 +19,6 @@ def notify_tracker_detection(
     url: str,
     page: str,
 ):
-    """Send notification to Slack and Email if not already sent"""
-
     if not is_already_notified(visitor_ip, "slack"):
         send_slack_notification(
             visitor_ip=visitor_ip,

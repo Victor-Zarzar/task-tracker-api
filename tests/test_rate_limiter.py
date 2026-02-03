@@ -8,29 +8,21 @@ client = TestClient(app)
 
 def test_tracker_rate_limit_exceeded():
     url = "/api/v1/tracker"
+    params = {"page": "https://www.victorzarzar.com.br"}
+    headers = {"X-Tracker-Token": settings.TOKEN}
 
-    params = {
-        "page": "https://www.victorzarzar.com.br",
-    }
+    limit = int(settings.RATE_LIMIT_REQUESTS)
 
-    headers = {
-        "X-Tracker-Token": settings.TOKEN,
-    }
+    for _ in range(limit):
+        r = client.get(url, params=params, headers=headers)
+        assert r.status_code == 200, f"Expected 200, got {r.status_code}: {r.text}"
 
-    response = client.get(url, params=params, headers=headers)
-    assert response.status_code == 200, (
-        f"Expected 200, but returned {response.status_code}: {response.text}"
-    )
+    r = client.get(url, params=params, headers=headers)
+    assert r.status_code == 429, f"Expected 429, got {r.status_code}: {r.text}"
 
-    response = client.get(url, params=params, headers=headers)
-    assert response.status_code == 429, (
-        f"Expected 429, but returned {response.status_code}: {response.text}"
-    )
-
-    data = response.json()
-
+    data = r.json()
     assert data["error"] == "Too Many Requests"
     assert isinstance(data.get("retry_after_seconds"), int)
 
-    assert "Retry-After" in response.headers
-    assert response.headers["Retry-After"].isdigit()
+    assert "Retry-After" in r.headers
+    assert r.headers["Retry-After"].isdigit()

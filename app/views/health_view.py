@@ -1,4 +1,5 @@
 from datetime import UTC, datetime
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request
 
@@ -18,7 +19,7 @@ router = APIRouter(prefix="/api/v1/tracker", tags=["Health Check"])
 )
 async def health_check(
     request: Request,
-    _: None = Depends(verify_token),
+    _: Annotated[None, Depends(verify_token)],
 ):
     start_time = datetime.now(UTC)
 

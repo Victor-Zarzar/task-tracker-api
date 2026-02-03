@@ -7,7 +7,6 @@ from app.config.settings import settings
 from app.services.notifiy_detection import notify_tracker_detection
 from app.services.request_context_service import collect_request_context
 
-# List of User-Agents considered bots
 BOT_USER_AGENTS = {
     "googlebot",
     "bingbot",
@@ -22,12 +21,10 @@ BOT_USER_AGENTS = {
 }
 
 
-# Function to check if the User-Agent belongs to a known bot
 def is_known_bot(user_agent: str) -> bool:
     return any(bot in user_agent.lower() for bot in BOT_USER_AGENTS)
 
 
-# Middleware to block requests from known bots based on User-Agent
 class BlockBotMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         user_agent = request.headers.get("User-Agent", "")

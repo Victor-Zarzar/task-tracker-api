@@ -8,9 +8,6 @@ from app.services.rate_limiter import limiter
 
 
 def setup_rate_limiter(app: FastAPI, enabled: bool = True) -> None:
-    """
-    Configures the rate limiter in the FastAPI application.
-    """
     if not enabled:
         logger.info("Rate limiter disabled by configuration")
         return

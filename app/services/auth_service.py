@@ -9,10 +9,6 @@ async def verify_token(
 ):
     masked_key = token[:4] + "****" if token else "None"
     client_ip = request.client.host if request else "unknown"
-    """
-    Dependency to verify the Tracker API token.
-    Raises 401 if invalid.
-    """
     if token != settings.TOKEN:
         logger.warning(
             f"Unauthorized access attempt - IP={client_ip}, API_KEY={masked_key}"

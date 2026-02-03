@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, BackgroundTasks, Depends, Request
 
 from app.config.logger import logger
@@ -15,7 +17,7 @@ router = APIRouter(prefix="/api/v1", tags=["Tracker API"])
 async def root(
     request: Request,
     background_tasks: BackgroundTasks,
-    query: TrackerSchema = Depends(),
+    query: Annotated[TrackerSchema, Depends()],
     _: None = Depends(verify_token),
 ):
     page = str(query.page)
