@@ -19,9 +19,6 @@ def notify_visitor_task(
     endpoint: str,
     url: str,
 ):
-    """
-    Background task responsible for notifying visitor access.
-    """
     try:
         send_email_notification(
             visitor_ip=visitor_ip,

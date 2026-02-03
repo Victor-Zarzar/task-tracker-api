@@ -1,6 +1,6 @@
 # Makefile Task Tracker API
 PROJECT_NAME = Task Tracker API
-VERSION = 1.0.0
+TAG = 1.0.0
 PORT = 8000
 DEV_COMPOSE = docker-compose.dev.yaml
 PROD_COMPOSE = docker-compose.prod.yaml
@@ -24,14 +24,10 @@ test:
 	docker compose -f $(DEV_COMPOSE) exec web pytest
 
 clean:
-	docker compose -f $(DEV_COMPOSE) down -v --remove-orphans 2>/dev/null || true
-	docker compose -f $(PROD_COMPOSE) down -v --remove-orphans 2>/dev/null || true
-	docker image prune -af || true
-	docker volume prune -f || true
-	docker builder prune -f || true
-	find . -name "_pycache_" -type d -exec rm -rf {} + 2>/dev/null || true
-	find . -name "*.pyc" -type f -delete 2>/dev/null || true
-	sudo rm -rf .pytest_cache .coverage htmlcov 2>/dev/null .ruff_cache || true
+	docker compose -f $(DEV_COMPOSE) down -v --remove-orphans --rmi local 2>/dev/null || true
+	docker compose -f $(PROD_COMPOSE) down -v --remove-orphans --rmi local 2>/dev/null || true
+	find . \( -name "__pycache__" -o -name "*.pyc" \) -exec rm -rf {} + 2>/dev/null || true
+	rm -rf .pytest_cache .coverage htmlcov .ruff_cache 2>/dev/null || true
 
 build-prod:
 	docker compose -f $(PROD_COMPOSE) build
@@ -53,7 +49,7 @@ lint:
 
 help:
 	@echo ""
-	@echo "$(PROJECT_NAME) ($(VERSION))"
+	@echo "$(PROJECT_NAME) ($(TAG))"
 	@echo "──────────────────────────────────────────────"
 	@echo "Development Commands:"
 	@echo "  make build-dev  ➜ Build image Docker (development)"

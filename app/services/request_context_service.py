@@ -6,9 +6,6 @@ from app.services.location_service import get_location
 
 
 async def collect_request_context(request: Request):
-    """
-    Returns standard tracking information for a request.
-    """
     visitor_ip = request.client.host
     user_agent = request.headers.get("User-Agent", "")
     timestamp = datetime.now(UTC)
